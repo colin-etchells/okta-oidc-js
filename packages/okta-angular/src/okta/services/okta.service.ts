@@ -91,11 +91,41 @@ export class OktaAuthService {
     }
 
     /**
+     * Renews the current accessToken in the tokenManager.
+     */
+    async renewAccessToken(): Promise<string | undefined>  {
+      try {
+        const accessToken = await this.oktaAuth.tokenManager.renew('accessToken');
+        return accessToken.accessToken;
+      } catch (err) {
+        // The user no longer has an existing SSO session in the browser.
+        // (OIDC error `login_required`)
+        // Ask the user to authenticate again.
+        return undefined;
+      }
+    }
+
+    /**
      * Returns the current idToken in the tokenManager.
      */
     async getIdToken(): Promise<string | undefined> {
       try {
         const idToken = await this.oktaAuth.tokenManager.get('idToken');
+        return idToken.idToken;
+      } catch (err) {
+        // The user no longer has an existing SSO session in the browser.
+        // (OIDC error `login_required`)
+        // Ask the user to authenticate again.
+        return undefined;
+      }
+    }
+
+    /**
+     * Renews the current idToken in the tokenManager.
+     */
+    async renewIdToken(): Promise<string | undefined> {
+      try {
+        const idToken = await this.oktaAuth.tokenManager.renew('idToken');
         return idToken.idToken;
       } catch (err) {
         // The user no longer has an existing SSO session in the browser.
